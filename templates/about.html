@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    <div class="container">
+        <div class="about-header">
+            <div class="about-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>About <span class="gradient-text">FileVault</span></h1>
+            <p>Secure file encryption made simple and accessible</p>
+        </div>
+
+        <div class="about-content">
+            <div class="about-section">
+                <h2>Our Mission</h2>
+                <p>
+                    FileVault was created with a simple mission: to make military-grade file encryption
+                    accessible to everyone. In an era where data privacy is increasingly important,
+                    we believe that everyone deserves access to powerful security tools that are
+                    easy to use.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>Security Standards</h2>
+                <div class="security-features">
+                    <div class="security-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>AES-256 Encryption</h4>
+                            <p>Industry-standard symmetric encryption algorithm</p>
+                        </div>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>PBKDF2 Key Derivation</h4>
+                            <p>100,000 iterations for secure password-based keys</p>
+                        </div>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Secure Password Hashing</h4>
+                            <p>SHA-256 hashing for user password storage</p>
+                        </div>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Random Salt Generation</h4>
+                            <p>Unique 16-byte salt for each encryption</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h2>How It Works</h2>
+                <div class="process-steps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <h4>Upload</h4>
+                        <p>Select any file you want to encrypt</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <h4>Encrypt</h4>
+                        <p>File is encrypted using your password</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <h4>Store</h4>
+                        <p>Encrypted file is securely stored</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <h4>Decrypt</h4>
+                        <p>Access your file anytime with your password</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h2>Privacy Promise</h2>
+                <p>
+                    We take your privacy seriously. Your files are encrypted before being stored,
+                    and we never have access to your encryption passwords. Only you can decrypt
+                    your files with your password.
+                </p>
+            </div>
+        </div>
+
+        <div class="about-cta">
+            <h3>Ready to Secure Your Files?</h3>
+            <div class="cta-buttons">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                    Get Started Free
+                </a>
+                <a href="{{ url_for('contact') }}" class="btn btn-secondary btn-lg">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

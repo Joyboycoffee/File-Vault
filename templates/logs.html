@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Activity Logs{% endblock %}
+
+{% block content %}
+<div class="logs-page">
+    <div class="container">
+        <div class="logs-header">
+            <h1><i class="fas fa-history"></i> Activity Logs</h1>
+            <p>Track all your encryption and decryption activities</p>
+        </div>
+
+        <div class="logs-card">
+            {% if logs %}
+            <div class="logs-table-container">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>File</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>
+                                <span class="action-badge action-{{ log.action|lower }}">
+                                    <i class="fas fa-{{ 'lock' if log.action == 'ENCRYPT' else 'unlock' if log.action == 'DECRYPT' else 'trash' }}"></i>
+                                    {{ log.action }}
+                                </span>
+                            </td>
+                            <td class="file-cell">{{ log.filename }}</td>
+                            <td class="time-cell">{{ log.timestamp }}</td>
+                            <td>
+                                <span class="status-badge success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No Activity Yet</h3>
+                <p>Your encryption and decryption activities will appear here</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i>
+                    Go to Dashboard
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="logs-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

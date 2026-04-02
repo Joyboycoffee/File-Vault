@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="fas fa-lock"></i>
+            <span>Military-Grade Encryption</span>
+        </div>
+        <h1 class="hero-title">
+            Secure Your Files with
+            <span class="gradient-text">Advanced Encryption</span>
+        </h1>
+        <p class="hero-subtitle">
+            FileVault provides state-of-the-art file encryption and decryption services.
+            Protect your sensitive data with AES-256 encryption and PBKDF2 key derivation.
+        </p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket"></i>
+                Get Started
+            </a>
+            <a href="{{ url_for('about') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-info-circle"></i>
+                Learn More
+            </a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="encryption-animation">
+            <div class="file-icon original">
+                <i class="fas fa-file"></i>
+                <span>Original</span>
+            </div>
+            <div class="arrow">
+                <i class="fas fa-arrow-right"></i>
+                <div class="particles"></div>
+            </div>
+            <div class="file-icon encrypted">
+                <i class="fas fa-file-shield"></i>
+                <span>Encrypted</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Choose <span class="gradient-text">FileVault?</span></h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>AES-256 Encryption</h3>
+                <p>Industry-standard encryption algorithm used by governments and security professionals worldwide.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h3>PBKDF2 Key Derivation</h3>
+                <p>Secure key derivation with 100,000 iterations to protect against brute-force attacks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Fast Processing</h3>
+                <p>Optimized encryption and decryption algorithms for quick file processing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3>Private & Secure</h3>
+                <p>Your files are encrypted locally. We never store your passwords or decrypted content.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Responsive Design</h3>
+                <p>Access your encrypted files from any device - desktop, tablet, or mobile.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Activity Logging</h3>
+                <p>Track all encryption and decryption activities with detailed logs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="container">
+        <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Create Account</h3>
+                    <p>Sign up for free and set up your secure account.</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Upload File</h3>
+                    <p>Select any file and set your encryption password.</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Encrypt & Store</h3>
+                    <p>Your file is encrypted with military-grade security.</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Decrypt Anytime</h3>
+                    <p>Access and decrypt your files whenever you need.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+    <div class="cta-content">
+        <h2>Ready to Secure Your Files?</h2>
+        <p>Join thousands of users who trust FileVault for their file security needs.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-lock"></i>
+            Start Encrypting Now
+        </a>
+    </div>
+</section>
+{% endblock %}
