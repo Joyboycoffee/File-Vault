@@ -8,7 +8,7 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <i class="fas fa-user-circle"></i>
-            <span>{{ user }}</span>
+            <span>{{ full_name }}</span>
         </div>
         <nav class="sidebar-nav">
             <a href="#encrypt" class="sidebar-link active" onclick="showSection('encrypt')">
@@ -28,6 +28,10 @@
                 <i class="fas fa-history"></i>
                 <span>Activity Log</span>
             </a>
+            <a href="{{ url_for('profile') }}" class="sidebar-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
         </nav>
     </aside>
 
@@ -36,7 +40,7 @@
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
-                <h1>Welcome back, {{ user }}!</h1>
+                <h1>Welcome back, {{ full_name }}!</h1>
                 <p>Your files are secure and ready to manage.</p>
             </div>
             <div class="stats">

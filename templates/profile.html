@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+            <p>Manage your account settings and security</p>
+        </div>
+
+        <div class="profile-content">
+            <!-- Profile Information Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user"></i> Profile Information</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('profile') }}" class="profile-form">
+                        <input type="hidden" name="action" value="update_profile">
+
+                        <div class="form-group">
+                            <label for="full_name">
+                                <i class="fas fa-id-card"></i>
+                                Full Name
+                            </label>
+                            <input type="text" id="full_name" name="full_name" required
+                                   value="{{ user_info.get('full_name', '') }}"
+                                   placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </label>
+                            <input type="email" id="email" name="email" required
+                                   value="{{ user_info.get('email', '') }}"
+                                   placeholder="Enter your email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">
+                                <i class="fas fa-user"></i>
+                                Username
+                            </label>
+                            <input type="text" id="username" name="username" disabled
+                                   value="{{ user }}"
+                                   placeholder="Username">
+                            <small class="form-hint">Username cannot be changed</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-calendar"></i>
+                                Account Created
+                            </label>
+                            <input type="text" disabled
+                                   value="{{ user_info.get('created_at', 'N/A') }}"
+                                   placeholder="Account creation date">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-lock"></i> Change Password</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('profile') }}" class="profile-form" id="passwordForm">
+                        <input type="hidden" name="action" value="change_password">
+
+                        <div class="form-group">
+                            <label for="current_password">
+                                <i class="fas fa-key"></i>
+                                Current Password
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="current_password" name="current_password" required
+                                       placeholder="Enter your current password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('current_password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_password">
+                                <i class="fas fa-lock"></i>
+                                New Password
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="new_password" name="new_password" required
+                                       placeholder="Enter new password"
+                                       oninput="checkPasswordStrength(this.value)">
+                                <button type="button" class="toggle-password" onclick="togglePassword('new_password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar"></div>
+                                <span class="strength-text"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_new_password">
+                                <i class="fas fa-check-circle"></i>
+                                Confirm New Password
+                            </label>
+                            <div class="password-input">
+                                <input type="password" id="confirm_new_password" name="confirm_password" required
+                                       placeholder="Confirm new password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('confirm_new_password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-match" id="passwordMatch"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-refresh"></i>
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Actions Card -->
+            <div class="profile-card danger-zone">
+                <div class="card-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+                </div>
+                <div class="card-body">
+                    <p class="danger-note">Be careful with these actions. They cannot be undone.</p>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-sidebar">
+            <div class="profile-info-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3>{{ user_info.get('full_name', user) }}</h3>
+                <p class="profile-username">@{{ user }}</p>
+                <p class="profile-email">{{ user_info.get('email', 'No email') }}</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-full">
+                    <i class="fas fa-home"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const button = field.nextElementSibling;
+    const icon = button.querySelector('i');
+
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function checkPasswordStrength(password) {
+    const strengthBar = document.querySelector('.strength-bar');
+    const strengthText = document.querySelector('.strength-text');
+    const strengthDiv = document.getElementById('passwordStrength');
+
+    let strength = 0;
+    if (password.length >= 6) strength++;
+    if (password.length >= 10) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+    strengthDiv.style.display = password ? 'block' : 'none';
+
+    const colors = ['#ff4444', '#ff8800', '#ffcc00', '#88cc00', '#00cc44'];
+    const texts = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+
+    strengthBar.style.width = ((strength / 5) * 100) + '%';
+    strengthBar.style.background = colors[strength - 1] || '#ff4444';
+    strengthText.textContent = texts[strength - 1] || 'Very Weak';
+    strengthText.style.color = colors[strength - 1] || '#ff4444';
+}
+
+// Password match check
+document.getElementById('confirm_new_password').addEventListener('input', function() {
+    const password = document.getElementById('new_password').value;
+    const confirm = this.value;
+    const matchDiv = document.getElementById('passwordMatch');
+
+    if (confirm) {
+        if (password === confirm) {
+            matchDiv.innerHTML = '<i class="fas fa-check"></i> Passwords match';
+            matchDiv.className = 'password-match match';
+        } else {
+            matchDiv.innerHTML = '<i class="fas fa-times"></i> Passwords do not match';
+            matchDiv.className = 'password-match no-match';
+        }
+    } else {
+        matchDiv.textContent = '';
+    }
+});
+
+// Form validation
+document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('new_password').value;
+    const confirm = document.getElementById('confirm_new_password').value;
+
+    if (password !== confirm) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+        return false;
+    }
+
+    if (password.length < 6) {
+        e.preventDefault();
+        alert('Password must be at least 6 characters!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

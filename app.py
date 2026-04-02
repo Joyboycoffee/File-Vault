@@ -12,7 +12,9 @@ import os
 import base64
 import hashlib
 import secrets
+import string
 from datetime import datetime
+import re
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
@@ -33,6 +35,7 @@ os.makedirs(ENCRYPTED_FOLDER, exist_ok=True)
 # In-memory user storage (in production, use a database)
 users = {}
 file_log = []
+password_reset_tokens = {}  # Store reset tokens temporarily
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -53,6 +56,15 @@ def generate_key_from_password(password, salt=None):
 def hash_password(password):
     """Hash password for storage."""
     return hashlib.sha256(password.encode()).hexdigest()
+
+def is_valid_email(email):
+    """Validate email format."""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+def generate_reset_token():
+    """Generate a secure reset token."""
+    return secrets.token_urlsafe(32)
 
 def log_action(action, filename, user):
     """Log file operations."""
@@ -92,19 +104,30 @@ def register():
     """User registration page."""
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
+        full_name = request.form['full_name']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
         if username in users:
             flash('Username already exists', 'error')
+        elif not is_valid_email(email):
+            flash('Invalid email format', 'error')
+        elif any(user['email'] == email for user in users.values()):
+            flash('Email already registered', 'error')
         elif password != confirm_password:
             flash('Passwords do not match', 'error')
         elif len(password) < 6:
             flash('Password must be at least 6 characters', 'error')
+        elif len(full_name.strip()) < 2:
+            flash('Please enter your full name', 'error')
         else:
             users[username] = {
                 'password': hash_password(password),
-                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                'email': email,
+                'full_name': full_name,
+                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'profile_image': None
             }
             flash('Registration successful! Please login.', 'success')
             return redirect(url_for('login'))
@@ -129,7 +152,104 @@ def dashboard():
             }
             user_files.append(file_info)
 
-    return render_template('dashboard.html', user=session['user'], files=user_files)
+    user_info = users.get(session['user'], {})
+    return render_template('dashboard.html', user=session['user'], full_name=user_info.get('full_name', session['user']), files=user_files)
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    """User profile management page."""
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        if action == 'update_profile':
+            full_name = request.form.get('full_name')
+            email = request.form.get('email')
+
+            if len(full_name.strip()) < 2:
+                flash('Please enter a valid full name', 'error')
+            elif not is_valid_email(email):
+                flash('Invalid email format', 'error')
+            elif email != users[session['user']]['email'] and any(user['email'] == email for user in users.values()):
+                flash('Email is already in use', 'error')
+            else:
+                users[session['user']]['full_name'] = full_name
+                users[session['user']]['email'] = email
+                flash('Profile updated successfully!', 'success')
+                return redirect(url_for('profile'))
+
+        elif action == 'change_password':
+            current_password = request.form.get('current_password')
+            new_password = request.form.get('new_password')
+            confirm_password = request.form.get('confirm_password')
+
+            if hash_password(current_password) != users[session['user']]['password']:
+                flash('Current password is incorrect', 'error')
+            elif new_password != confirm_password:
+                flash('New passwords do not match', 'error')
+            elif len(new_password) < 6:
+                flash('Password must be at least 6 characters', 'error')
+            else:
+                users[session['user']]['password'] = hash_password(new_password)
+                flash('Password changed successfully!', 'success')
+                return redirect(url_for('profile'))
+
+    user_info = users.get(session['user'], {})
+    return render_template('profile.html', user=session['user'], user_info=user_info)
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Forgot password page - send reset code."""
+    if request.method == 'POST':
+        email = request.form.get('email')
+
+        # Find user by email
+        user = None
+        for username, user_data in users.items():
+            if user_data['email'] == email:
+                user = username
+                break
+
+        if user:
+            reset_token = generate_reset_token()
+            password_reset_tokens[reset_token] = {
+                'username': user,
+                'created_at': datetime.now()
+            }
+            flash(f'Login the account with username "{user}" and use the link provided in your browser URL bar', 'info')
+            return redirect(url_for('reset_password', token=reset_token))
+        else:
+            flash('Email not found in our system', 'error')
+
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Reset password with token."""
+    if token not in password_reset_tokens:
+        flash('Invalid or expired reset link', 'error')
+        return redirect(url_for('forgot_password'))
+
+    reset_data = password_reset_tokens[token]
+    username = reset_data['username']
+
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if new_password != confirm_password:
+            flash('Passwords do not match', 'error')
+        elif len(new_password) < 6:
+            flash('Password must be at least 6 characters', 'error')
+        else:
+            users[username]['password'] = hash_password(new_password)
+            del password_reset_tokens[token]  # Remove used token
+            flash('Password reset successfully! Please login with your new password.', 'success')
+            return redirect(url_for('login'))
+
+    return render_template('reset_password.html', username=username, token=token)
 
 @app.route('/encrypt', methods=['POST'])
 def encrypt_file():

@@ -34,6 +34,7 @@
                 {% if session.user %}
                     <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                     <li><a href="{{ url_for('logs') }}" class="nav-link">Logs</a></li>
+                    <li><a href="{{ url_for('profile') }}" class="nav-link">Profile</a></li>
                     <li><a href="{{ url_for('logout') }}" class="nav-link nav-btn">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('login') }}" class="nav-link nav-btn">Login</a></li>
