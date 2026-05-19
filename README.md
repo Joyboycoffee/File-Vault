@@ -136,7 +136,3 @@ flask run
 ## License
 
 This project is for educational purposes.
-
-## Author
-
-Built with Claude Code
