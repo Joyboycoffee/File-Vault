@@ -2,7 +2,7 @@
 
 A modern, responsive web application for encrypting and decrypting files using military-grade AES-256 encryption with PBKDF2 key derivation.
 
-![FileVault Screenshot](https://via.placeholder.com/800x400/6366f1/ffffff?text=FileVault)
+![FileVault Screenshot](https://github.com/Joyboycoffee/File-Vault/blob/main/templates/image.png)
 
 ## Features
 
